@@ -61,6 +61,7 @@ body {
 <script type="text/javascript">
 
 var view = null;
+var lastview = "currentHome";
 
 function onresize() {
 	var o = document.getElementById("viewerCanvas");
@@ -119,16 +120,19 @@ function onload() {
            activateCameraSwitchKey: true                        // Switch between top view / virtual visit with space bar if not false or missing */
           });  
 
-	setTimeout(() => {
+	document.getElementById('aerialView').addEventListener('click', () => window.setTimeout(() => changeView(lastview), 4000));
+	document.getElementById('virtualVisit').addEventListener('click', () => window.setTimeout(() => changeView(lastview), 4000));
+	document.getElementById('viewSelect').addEventListener('change', e => changeView(e.target.value));
+
+	window.setTimeout(() => {
 		view.getController().viewFromTop();
-		changeView("currentHome");
-	}, 2000);
+		changeView(lastview);
+	}, 4000);
 }
 
-function setview(views) {
-	let jj = views;
+function setlevels(levels) {
 	view.getHome().getLevels().forEach(l => {
-		if (jj.find(x => x == l.getName())) {
+		if (levels.find(x => x == l.getName())) {
 			l.setViewable(true);
 			l.setVisible(true);
 		} else {
@@ -144,27 +148,30 @@ function changeView(v) {
 	var roff1 = roff2.concat(["תושבת - גג"])
 	var current = ["מבנה קיים - הורדות"];
 	var newh = ["מבנה חדש - הוספות", "מבנה חדש - השלמות - מרפסת"];
+	
+	lastview = v;
+	
 	switch(v) {
 		case "currentHome":
-			setview(common.concat(roff1).concat(current).concat(["תושבת - גג", "מבנה קיים - הורדות", "מבנה קיים - ריהוט", "גג מרפסת", "גג רעפים"]));
+			setlevels(common.concat(roff1).concat(current).concat(["תושבת - גג", "מבנה קיים - הורדות", "מבנה קיים - ריהוט", "גג מרפסת", "גג רעפים"]));
 		break;
 		case "currentHomeInternal":
-			setview(common.concat(current).concat(["מבנה קיים - ריהוט"]))
+			setlevels(common.concat(current).concat(["מבנה קיים - ריהוט"]))
 		break;
 		case "currentHomeInternalEmpty":
-			setview(common.concat(current))
+			setlevels(common.concat(current))
 		break;
 		case "newHome":
-			setview(common.concat(roff2).concat(newh).concat(["מבנה חדש - ריהוט"]));
+			setlevels(common.concat(roff2).concat(newh).concat(["מבנה חדש - ריהוט"]));
 		break;
 		case "newHomeInternal":
-			setview(common.concat(newh).concat(["מבנה חדש - ריהוט"]));
+			setlevels(common.concat(newh).concat(["מבנה חדש - ריהוט"]));
 		break;
 		case "newHomeInternalEmptyChanges":
-			setview(common.concat(newh).concat(["מבנה חדש - הוספות - טקסט"]));
+			setlevels(common.concat(newh).concat(["מבנה חדש - הוספות - טקסט"]));
 		break;
 		case "newHomeInternalEmpty":
-			setview(common.concat(newh))
+			setlevels(common.concat(newh))
 		break;
 	}
 }
@@ -187,8 +194,8 @@ function changeView(v) {
       <label class="viewerComponent" for="virtualVisit" style="visibility: hidden;">Virtual visit</label>
     <select id="levelsAndCameras" class="viewerComponent" style="visibility: hidden;"></select>
 
-	<select onchange="changeView(this.options[this.selectedIndex].value)" id="viewSelect" class="viewerComponent">
-		<option value="currentHome">בית נוכחי - חוץ</option>
+	<select id="viewSelect" class="viewerComponent">
+		<option value="currentHome" selected="selected">בית נוכחי - חוץ</option>
 		<option value="currentHomeInternalEmpty">בית נוכחי - פנים - ללא ריהוט</option>
 		<option value="currentHomeInternal">בית נוכחי - פנים</option>
 		<option value="newHome">בית חדש - חוץ</option>
